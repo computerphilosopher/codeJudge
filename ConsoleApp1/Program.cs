@@ -7,22 +7,67 @@ using System.Diagnostics;
 
 namespace ConsoleApp1
 {
-    class Program
+    class GccManager
     {
+        Process compileProcess;
+        Process excuteProcess;
+
+        GccManager()
+        {
+
+            compileProcess = new Process();
+            excuteProcess = new Process();
+        }
+
+        void compile(string compiler_path)
+        {
+
+            compileProcess.StartInfo = new ProcessStartInfo(compiler_path, null);
+            //compileProcess.StartInfo.FileName = "gcc.bat";
+            compileProcess.StartInfo.UseShellExecute = false;
+            compileProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            compileProcess.Start();
+            compileProcess.Kill();
+        }
+
+        void excute(string exe_path)
+        {
+
+
+            excuteProcess.StartInfo = new ProcessStartInfo(exe_path, null);
+
+            //excuteProcess.StartInfo.FileName = "hello.exe";
+            
+            excuteProcess.StartInfo.UseShellExecute = false;
+            excuteProcess.StartInfo.RedirectStandardOutput = true;
+            excuteProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            
+            excuteProcess.Start();
+        }
+
         static void Main(string[] args)
         {
-            string minGWPath = "C:\\Users\\user\\Desktop\\gcc.bat";
-            string filePath = "C:\\Users\\user\\Desktop\\hello.exe";
-            Console.WriteLine(minGWPath);
+            GccManager g = new GccManager();
+            g.compile("F:\\gcc.bat");
+            g.excute("C:\\Users\\user\\Desktop\\hello.exe");
+ 
+            string str = g.excuteProcess.StandardOutput.ReadToEnd();
+            g.excuteProcess.WaitForExit();
 
-            ProcessStartInfo gccStartInfo = new ProcessStartInfo(minGWPath, null);
-            ProcessStartInfo hello = new ProcessStartInfo(filePath, null);
-
-            gccStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-            Process.Start(gccStartInfo);
-            Process.Start(hello);
+            Console.WriteLine("test");
+            Console.WriteLine(str);
+ 
         }
+ 
+    }
+
+    /* 채점 클래스 */
+
+    class Marker
+    {
+
+
     }
 }
 //C:\Users\user\Desktop\VimC:\Users\user\Desktop\Vim\MinGW\bin
