@@ -3,27 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+
 using System.Diagnostics;
+
+
+using System.Windows.Forms;
 
 namespace ConsoleApp1
 {
     class GccManager
     {
-        Process compileProcess;
-        Process excuteProcess;
+        private Process compileProcess;
+        private Process excuteProcess;
 
-        GccManager()
+        GccManager(string batchPath, string exePath)
         {
 
             compileProcess = new Process();
             excuteProcess = new Process();
+
+            compileProcess.StartInfo = new ProcessStartInfo(batchPath, null);
+            excuteProcess.StartInfo = new ProcessStartInfo(exePath, null);
         }
 
-        void compile(string compiler_path)
+        public void Compile()
         {
-
-            compileProcess.StartInfo = new ProcessStartInfo(compiler_path, null);
-            //compileProcess.StartInfo.FileName = "gcc.bat";
             compileProcess.StartInfo.UseShellExecute = false;
             compileProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
@@ -31,43 +35,57 @@ namespace ConsoleApp1
             compileProcess.Kill();
         }
 
-        void excute(string exe_path)
+        public void Excute()
         {
 
-
-            excuteProcess.StartInfo = new ProcessStartInfo(exe_path, null);
-
-            //excuteProcess.StartInfo.FileName = "hello.exe";
-            
             excuteProcess.StartInfo.UseShellExecute = false;
             excuteProcess.StartInfo.RedirectStandardOutput = true;
             excuteProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            
+
             excuteProcess.Start();
         }
 
         static void Main(string[] args)
         {
-            GccManager g = new GccManager();
-            g.compile("F:\\gcc.bat");
-            g.excute("C:\\Users\\user\\Desktop\\hello.exe");
- 
-            string str = g.excuteProcess.StandardOutput.ReadToEnd();
+            string relativePath = Application.ExecutablePath + "\\..\\..";
+            Console.WriteLine(relativePath);
+
+            GccManager g = new GccManager(relativePath + "\\gcc.bat", relativePath + "\\hello.exe");
+            //GccManager g = new GccManager("F:\\gcc.bat", "C:\\Users\\user\\Desktop\\hello.exe");
+            
+            g.Compile();
+            g.Excute();
+            
             g.excuteProcess.WaitForExit();
+            string str = g.excuteProcess.StandardOutput.ReadToEnd();
 
             Console.WriteLine("test");
             Console.WriteLine(str);
- 
+
         }
- 
+
     }
 
     /* 채점 클래스 */
 
     class Marker
     {
+        private string userSubmission;
+        private string correctAnswerPath;
+ 
+        Marker (string userSubmission, string correctAnswerPath)
+        {
+            this.userSubmission = userSubmission;
+            this.correctAnswerPath = correctAnswerPath ;
 
+        }
 
+        bool IsCorrect()
+        {
+            return false;
+
+        }
+
+ 
     }
 }
-//C:\Users\user\Desktop\VimC:\Users\user\Desktop\Vim\MinGW\bin
