@@ -15,6 +15,7 @@ namespace ConsoleApp1
     {
         private Process compileProcess;
         private Process excuteProcess;
+        static string relativePath= Application.ExecutablePath + "\\..\\..";
 
         GccManager(string batchPath, string exePath)
         {
@@ -24,6 +25,7 @@ namespace ConsoleApp1
 
             compileProcess.StartInfo = new ProcessStartInfo(batchPath, null);
             excuteProcess.StartInfo = new ProcessStartInfo(exePath, null);
+
         }
 
         public void Compile()
@@ -47,20 +49,25 @@ namespace ConsoleApp1
 
         static void Main(string[] args)
         {
-            string relativePath = Application.ExecutablePath + "\\..\\..";
-            Console.WriteLine(relativePath);
 
-            GccManager g = new GccManager(relativePath + "\\gcc.bat", relativePath + "\\hello.exe");
-            //GccManager g = new GccManager("F:\\gcc.bat", "C:\\Users\\user\\Desktop\\hello.exe");
+            GccManager g = new GccManager(GccManager.relativePath + "\\gcc.bat", GccManager.relativePath + "\\hello.exe");
+
+            Console.WriteLine(GccManager.relativePath);
             
             g.Compile();
             g.Excute();
             
             g.excuteProcess.WaitForExit();
-            string str = g.excuteProcess.StandardOutput.ReadToEnd();
+
+            string userProgramOutput = g.excuteProcess.StandardOutput.ReadToEnd();
 
             Console.WriteLine("test");
-            Console.WriteLine(str);
+            Console.WriteLine(userProgramOutput);
+
+            Marker m = new Marker (userProgramOutput, relativePath + "\\a.txt");
+
+            Console.WriteLine(m.IsCorrect());
+
 
         }
 
@@ -68,24 +75,34 @@ namespace ConsoleApp1
 
     /* 채점 클래스 */
 
-    class Marker
+    public class Marker
     {
         private string userSubmission;
-        private string correctAnswerPath;
+        private string AnswerPath;
+        private string Answer;
  
-        Marker (string userSubmission, string correctAnswerPath)
+        public Marker (string userSubmission, string AnswerPath)
         {
             this.userSubmission = userSubmission;
-            this.correctAnswerPath = correctAnswerPath ;
-
+            this.AnswerPath = AnswerPath ;
+ 
+            Answer = File.ReadAllText(AnswerPath);
         }
 
-        bool IsCorrect()
+
+        public bool IsCorrect()
         {
-            return false;
+            if (userSubmission.Equals(Answer))
+            {
+                return true;
+            }
+
+            else
+            {
+                return false;
+            }
 
         }
-
  
     }
 }
